@@ -1,0 +1,69 @@
+# 🔒 Ignore Wi-Fi and certificate secrets
+cert.txt
+*.key
+*.pem
+*.crt
+*.p12
+*.der
+*.env
+*.secrets
+*.credentials
+
+# 📁 Arduino IDE junk
+*.ino.*.bak
+*.cpp.*.bak
+
+# 🧠 IntelliSense + Code editor configs
+.vscode/
+.idea/
+*.code-workspace
+
+# 🛠️ Build artifacts
+build/
+*.elf
+*.bin
+*.hex
+*.map
+*.d
+*.o
+*.a
+*.pyc
+*.pyo
+*.exe
+
+# 🚀 Arduino libraries
+/libraries/*
+
+# 🧙🏽‍♂️ Ignore compiled Python tools
+__pycache__/
+
+# 🗑️ macOS filesystem noise
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+*~ 
+.fseventsd
+.TemporaryItems
+.apdisk
+
+# 🔧 Board manager files
+hardware/
+tools/
+.cache/
+core/
+
+# 🧪 Testing/output dumps
+*.log
+*.tmp
+
+# 📡 LittleFS or SPIFFS content
+*.littlefs.bin
+*.spiffs.bin
