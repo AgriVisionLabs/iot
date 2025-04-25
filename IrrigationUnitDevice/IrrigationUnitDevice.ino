@@ -274,7 +274,7 @@ void handleDisconnect() {
   prefs.begin("wifi", false);
   prefs.clear();
   prefs.end();
-  server.send(200, "text/plain", "Disconnected");
+  server.send(200, "text/plain", "DISCONNECTED");
 }
 
 void handleNotFound() {

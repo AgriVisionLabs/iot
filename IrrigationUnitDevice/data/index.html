@@ -335,12 +335,7 @@
                 <div class="network-name" id="network-name">No network</div>
             </div>
             <div id="action-container" style="display: none;">
-                <div id="disconnect-icon" class="action-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </div>
+                
                 <div id="loading-icon" class="loading-circle" style="display: none;"></div>
             </div>
         </div>
@@ -387,7 +382,6 @@
         const statusLabel = document.getElementById('status-label');
         const networkName = document.getElementById('network-name');
         const actionContainer = document.getElementById('action-container');
-        const disconnectIcon = document.getElementById('disconnect-icon');
         const loadingIcon = document.getElementById('loading-icon');
         const wifiForm = document.getElementById('wifi-form');
         const connectButton = document.getElementById('connect-button');
@@ -402,7 +396,6 @@
 
         // Event listeners
         wifiForm.addEventListener('submit', handleFormSubmit);
-        disconnectIcon.addEventListener('click', disconnectNetwork);
 
         // Functions
         function checkConnectionStatus() {
@@ -519,7 +512,6 @@
         function updateConnectionStatus(status, networkSSID = '') {
             // Reset all states first
             statusDot.classList.remove('connected', 'disconnected', 'connecting');
-            disconnectIcon.style.display = 'none';
             loadingIcon.style.display = 'none';
             actionContainer.style.display = 'none';
 
@@ -528,7 +520,6 @@
                     statusDot.classList.add('connected');
                     statusLabel.textContent = 'Currently connected to:';
                     networkName.textContent = networkSSID;
-                    disconnectIcon.style.display = 'block';
                     actionContainer.style.display = 'block';
                     break;
 
