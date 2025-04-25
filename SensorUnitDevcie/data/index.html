@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Settings - Agrivision</title>
+    <!-- Load Manrope font -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #F7FAFC;
+            color: #10141E;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 450px;
+            width: 100%;
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 300px; /* Ensure minimum height to prevent container collapse */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #10141E;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #4A5568;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #4A5568;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 16px;
+            color: #10141E;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #1E6930;
+            box-shadow: 0 0 0 3px rgba(30, 105, 48, 0.1);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            background-color: #1E6930;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 24px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #165223;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #A0AEC0;
+        }
+
+        .connection-status {
+            background-color: #F9FAFB;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .connected {
+            background-color: #1E6930;
+        }
+
+        .disconnected {
+            background-color: #DC2626;
+        }
+
+        .connecting {
+            background-color: #F59E0B;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.6;
+            }
+        }
+
+        .status-text {
+            flex-grow: 1;
+        }
+
+        .status-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4A5568;
+            margin-bottom: 2px;
+        }
+
+        .network-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #10141E;
+        }
+
+        .action-icon {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4A5568;
+            transition: color 0.2s ease;
+        }
+
+        .action-icon:hover {
+            color: #DC2626;
+        }
+
+        .loading-circle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #F59E0B;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Popup notification styles */
+        .popup-notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: nowrap;
+        }
+
+        .popup-notification.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-notification .loading-circle {
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            margin-right: 12px;
+        }
+
+        /* AP mode message styles */
+        .ap-mode-message {
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .ap-mode-message.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ap-mode-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #10141E;
+            margin-bottom: 12px;
+        }
+
+        .ap-mode-text {
+            font-size: 16px;
+            color: #4A5568;
+        }
+
+        /* Content sections */
+        .content-section {
+            width: 100%;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .content-section.hide {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Main content (will be hidden after AP mode is disabled) -->
+    <div id="main-content" class="content-section">
+        <div class="logo">
+            <img src="/logo.png" alt="Agrivision Logo">
+        </div>
+        <h1>WiFi Settings</h1>
+        <p>Enter the network credentials you want to connect to or switch to if your device is already connected.</p>
+
+        <div class="connection-status">
+            <div id="status-dot" class="status-dot disconnected"></div>
+            <div class="status-text">
+                <div class="status-label" id="status-label">Currently not connected</div>
+                <div class="network-name" id="network-name">No network</div>
+            </div>
+            <div id="action-container" style="display: none;">
+                <div id="disconnect-icon" class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+                <div id="loading-icon" class="loading-circle" style="display: none;"></div>
+            </div>
+        </div>
+
+        <form id="wifi-form">
+            <div class="form-group">
+                <label for="ssid">Network Name (SSID)</label>
+                <input type="text" id="ssid" name="ssid" placeholder="Enter WiFi network name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter WiFi password" required>
+            </div>
+
+            <button type="submit" id="connect-button">Connect to Network</button>
+        </form>
+
+        <div class="footer">
+            © 2025 AgrivisionLabs. All rights reserved.
+        </div>
+    </div>
+
+    <!-- AP mode disabled message (will be shown after popup) -->
+    <div id="ap-mode-message" class="ap-mode-message">
+        <div class="ap-mode-title">AP mode disabled</div>
+        <div class="ap-mode-text">To enable, press and hold the reset button</div>
+    </div>
+
+    <!-- Popup notification -->
+    <div id="popup-notification" class="popup-notification">
+        <div class="loading-circle"></div>
+        <span>Disabling AP mode...</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM elements
+        const statusDot = document.getElementById('status-dot');
+        const statusLabel = document.getElementById('status-label');
+        const networkName = document.getElementById('network-name');
+        const actionContainer = document.getElementById('action-container');
+        const disconnectIcon = document.getElementById('disconnect-icon');
+        const loadingIcon = document.getElementById('loading-icon');
+        const wifiForm = document.getElementById('wifi-form');
+        const connectButton = document.getElementById('connect-button');
+        const ssidInput = document.getElementById('ssid');
+        const passwordInput = document.getElementById('password');
+        const popupNotification = document.getElementById('popup-notification');
+        const apModeMessage = document.getElementById('ap-mode-message');
+        const mainContent = document.getElementById('main-content');
+
+        // Always start with the WiFi settings form
+        checkConnectionStatus();
+
+        // Event listeners
+        wifiForm.addEventListener('submit', handleFormSubmit);
+        disconnectIcon.addEventListener('click', disconnectNetwork);
+
+        // Functions
+        function checkConnectionStatus() {
+            fetch('/status')
+                .then(response => response.text())
+                .then(text => {
+                    if (text.includes('SUCCESS')) {
+                        const ssid = text.split(':')[1] || 'Unknown Network';
+                        updateConnectionStatus('connected', ssid);
+                        localStorage.setItem('connectedNetwork', ssid);
+                    } else {
+                        updateConnectionStatus('disconnected');
+                        localStorage.removeItem('connectedNetwork');
+                    }
+                })
+                .catch(() => {
+                    updateConnectionStatus('disconnected');
+                    localStorage.removeItem('connectedNetwork');
+                });
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const ssid = ssidInput.value.trim();
+
+            if (ssid) {
+                connectToNetwork(ssid);
+                // Clear form fields
+                ssidInput.value = '';
+                passwordInput.value = '';
+            }
+        }
+
+        function connectToNetwork(ssid) {
+            const password = passwordInput.value.trim();
+
+            updateConnectionStatus('connecting', ssid);
+
+            fetch('/connect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `ssid=${encodeURIComponent(ssid)}&password=${encodeURIComponent(password)}`
+            })
+                .then(() => {
+                    pollStatus(ssid); // Wait for ESP32 to finish connecting
+                })
+                .catch(err => {
+                    console.error("Connection error:", err);
+                    updateConnectionStatus('failed', ssid);
+                });
+        }
+
+        function disconnectNetwork() {
+            // Show disconnecting state immediately
+            updateConnectionStatus('disconnecting');
+
+            // Make API call to ESP32
+            fetch('/disconnect', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        updateConnectionStatus('disconnected');
+                        localStorage.removeItem('connectedNetwork');
+                    } else {
+                        alert('Failed to disconnect.');
+                        updateConnectionStatus('connected', localStorage.getItem('connectedNetwork'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error disconnecting:', error);
+                    updateConnectionStatus('connected', localStorage.getItem('connectedNetwork'));
+                });
+        }
+
+        function pollStatus(ssid) {
+            let attempts = 0;
+            const interval = setInterval(() => {
+                fetch('/status')
+                    .then(response => response.text())
+                    .then(text => {
+                        if (text.includes('SUCCESS')) {
+                            updateConnectionStatus('connected', ssid);
+                            localStorage.setItem('connectedNetwork', ssid);
+                            clearInterval(interval);
+
+                            // Show "Disabling AP mode" popup after 4 seconds
+                            setTimeout(() => {
+                                showPopupNotification();
+
+                                // Hide the notification after 5 seconds and show AP mode message
+                                setTimeout(() => {
+                                    hidePopupNotification();
+                                    showApModeScreen();
+                                }, 3000);
+                            }, 4000);
+                        } else if (text.includes('FAIL')) {
+                            updateConnectionStatus('failed', ssid);
+                            clearInterval(interval);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Status polling error:', err);
+                        updateConnectionStatus('failed', ssid);
+                        clearInterval(interval);
+                    });
+
+                attempts++;
+                if (attempts > 15) {
+                    updateConnectionStatus('failed', ssid);
+                    clearInterval(interval);
+                }
+            }, 1000); // Poll every 1 second, max 15 tries (15 seconds)
+        }
+
+        function updateConnectionStatus(status, networkSSID = '') {
+            // Reset all states first
+            statusDot.classList.remove('connected', 'disconnected', 'connecting');
+            disconnectIcon.style.display = 'none';
+            loadingIcon.style.display = 'none';
+            actionContainer.style.display = 'none';
+
+            switch(status) {
+                case 'connected':
+                    statusDot.classList.add('connected');
+                    statusLabel.textContent = 'Currently connected to:';
+                    networkName.textContent = networkSSID;
+                    disconnectIcon.style.display = 'block';
+                    actionContainer.style.display = 'block';
+                    break;
+
+                case 'connecting':
+                    statusDot.classList.add('connecting');
+                    statusLabel.textContent = 'Connecting to:';
+                    networkName.textContent = networkSSID;
+                    loadingIcon.style.display = 'block';
+                    actionContainer.style.display = 'block';
+                    connectButton.disabled = true;
+                    break;
+
+                case 'disconnecting':
+                    statusDot.classList.add('connecting');
+                    statusLabel.textContent = 'Disconnecting from:';
+                    loadingIcon.style.display = 'block';
+                    actionContainer.style.display = 'block';
+                    connectButton.disabled = true;
+                    break;
+
+                case 'failed':
+                    statusDot.classList.add('disconnected');
+                    statusLabel.textContent = 'Failed to connect to:';
+                    networkName.textContent = networkSSID;
+                    connectButton.disabled = false;
+                    break;
+
+                case 'disconnected':
+                default:
+                    statusDot.classList.add('disconnected');
+                    statusLabel.textContent = 'Currently not connected';
+                    networkName.textContent = 'No network';
+                    connectButton.disabled = false;
+                    break;
+            }
+        }
+
+        function showPopupNotification() {
+            popupNotification.classList.add('show');
+        }
+
+        function hidePopupNotification() {
+            popupNotification.classList.remove('show');
+        }
+
+        function showApModeScreen() {
+            // Show AP mode message first (but still invisible)
+            apModeMessage.style.display = 'flex';
+
+            // Then hide the main content
+            mainContent.classList.add('hide');
+
+            // After a very short delay, show the AP mode message
+            setTimeout(() => {
+                apModeMessage.classList.add('show');
+            }, 50);
+        }
+    });
+</script>
+</body>
+</html>
