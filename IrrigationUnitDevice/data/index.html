@@ -223,10 +223,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.85);
             color: white;
             padding: 16px 24px;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 500;
             z-index: 100;
@@ -238,6 +238,7 @@
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
             white-space: nowrap;
+            font-family: 'Manrope', sans-serif;
         }
 
         .popup-notification.show {
@@ -268,6 +269,16 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 40px;
+        }
+
+        .ap-mode-message .logo {
+            margin-bottom: 30px;
+        }
+
+        .ap-mode-message .logo img {
+            max-width: 180px;
+            height: auto;
         }
 
         .ap-mode-message.show {
@@ -276,7 +287,7 @@
         }
 
         .ap-mode-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 600;
             color: #10141E;
             margin-bottom: 12px;
@@ -285,8 +296,8 @@
         .ap-mode-text {
             font-size: 16px;
             color: #4A5568;
+            margin-bottom: 20px;
         }
-
         /* Content sections */
         .content-section {
             width: 100%;
@@ -355,6 +366,9 @@
 
     <!-- AP mode disabled message (will be shown after popup) -->
     <div id="ap-mode-message" class="ap-mode-message">
+        <div class="logo">
+            <img src="/logo.png" alt="Agrivision Logo">
+        </div>
         <div class="ap-mode-title">AP mode disabled</div>
         <div class="ap-mode-text">To enable, press and hold the reset button</div>
     </div>
