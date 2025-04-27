@@ -9,7 +9,7 @@
 using namespace websockets;
 
 // declar and assign buzzer pin
-const int buzzerPin = 13;
+const int buzzerPin = 14;
 
 // declare and assign the websocket url
 const char* websocketUrl = "wss://agrivision.tryasp.net/IrrigationDeviceWS";
