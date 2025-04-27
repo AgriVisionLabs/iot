@@ -23,7 +23,7 @@ const String provisioningKey = "IRRIGATE-X7Q4-PUMP-KEY9-Z1B3L";
 // webserver setup
 Preferences prefs;
 WebServer server(80); // listen on port 80 for http requests 
-const char* apSSID = "IrrigationUnit";
+const char* apSSID = "IRRIGATE-ESP32-01";
 const char* apPassword = "password";
 
 String pendingSSID = "";
@@ -109,6 +109,7 @@ void onWebSocketEvent(WebsocketsEvent event, String data) {
 
   if (event == WebsocketsEvent::ConnectionClosed) {
     Serial.println("🛑 WebSocket connection closed");
+    analogWrite(LED_PIN, 0);
   }
 }
 
@@ -128,13 +129,14 @@ void connectToWebSocket() {
 
   if (client.connect(websocketUrl)) {
     Serial.println("✅ WebSocket connected");
+    analogWrite(LED_PIN, 50);
 
     String mac = WiFi.macAddress();
     String ip = WiFi.localIP().toString();
 
     String jsonMsg = "{";
     jsonMsg += "\"type\":\"connect\",";
-    jsonMsg += "\"mac\":\"" + mac + "\",";
+    jsonMsg += "\"macAddress\":\"" + mac + "\",";
     jsonMsg += "\"ip\":\"" + ip + "\",";
     jsonMsg += "\"provisioningKey\":\"" + provisioningKey + "\"";
     jsonMsg += "}";
@@ -194,10 +196,12 @@ void handleStatus() {
 
 void checkResetButton() {
   if (digitalRead(RESET_BUTTON_PIN) == LOW) {
+    digitalWrite(LED_PIN, 0);
     unsigned long start = millis();
     
     while (digitalRead(RESET_BUTTON_PIN) == LOW) {
       // blink slowly while the button is pressed
+      digitalWrite(LED_PIN, 0);
       digitalWrite(LED_PIN, (millis() / 300) % 2);
 
       if (millis() - start > 3000) {
@@ -205,9 +209,9 @@ void checkResetButton() {
 
         // flash the LED rapidally to signal wipe
         for (int i = 0; i < 10; i++) {
-          digitalWrite(LED_PIN, HIGH);
+          digitalWrite(LED_PIN, 50);
           delay(100);
-          digitalWrite(LED_PIN, LOW);
+          digitalWrite(LED_PIN, 0);
           delay(100);
         }
 
@@ -224,7 +228,7 @@ void checkResetButton() {
         ESP.restart();
       }
       // reset LED state when button is released
-      digitalWrite(LED_PIN, LOW);
+      digitalWrite(LED_PIN, 0);
     }
   }
 }
