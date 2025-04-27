@@ -3,6 +3,7 @@
 #include <Preferences.h>
 #include <ArduinoWebsockets.h>
 #include <LittleFS.h>
+#include <ArduinoJson.h>
 #define RESET_BUTTON_PIN 0
 #define LED_PIN 2
 
@@ -92,15 +93,41 @@ void handleConnect() {
   server.send(200, "text/plain", "OK");
 }
 
-// WebSockets
+// WebSocket stuff
 void onWebSocketMessage(WebsocketsMessage message) {
   String msg = message.data();
   Serial.println("📩 WebSocket Message: " + msg);
-  if (msg == "buzz"){
-    Serial.println("🎵 Buzz command received");
+
+  // Prepare JSON doc (adjust size if needed later)
+  StaticJsonDocument<200> doc;
+
+  DeserializationError error = deserializeJson(doc, msg);
+  if (error) {
+    Serial.print("❌ Failed to parse WebSocket JSON: ");
+    Serial.println(error.c_str());
+    return;
+  }
+
+  // Extract fields
+  String type = doc["type"] | "";
+  String command = doc["command"] | "";
+
+  if (type == "command" && command == "toggle_pump") {
+    Serial.println("🎵 toggle_pump command received");
+
+    // buzz
     digitalWrite(buzzerPin, HIGH);
     delay(500);
     digitalWrite(buzzerPin, LOW);
+  }
+   else if (type == "ping") {
+    Serial.println("🏓 Ping received — sending Pong...");
+
+    String pongMsg = "{";
+    pongMsg += "\"type\":\"pong\"";
+    pongMsg += "}";
+
+    client.send(pongMsg);
   }
 }
 
