@@ -111,9 +111,30 @@ void onWebSocketMessage(WebsocketsMessage message) {
   // Extract fields
   String type = doc["type"] | "";
   String command = doc["command"] | "";
+  String cid = doc["cid"] | "";
+  bool toState = doc["toState"] | false;
 
   if (type == "command" && command == "toggle_pump") {
-    Serial.println("🎵 toggle_pump command received");
+    Serial.println("✅ toggle_pump command received");
+
+    prefs.begin("state", false);
+    prefs.putBool("isOn", toState);
+    prefs.end();
+
+    Serial.printf("💾 Saved isOn = %s to NVS\n", toState ? "true" : "false");
+
+    // send back acknowledgment
+    String ackMsg = "{";
+    ackMsg += "\"type\":\"ack\",";
+    ackMsg += "\"cid\":\"" + cid + "\"";
+    ackMsg += "}";
+
+    client.send(ackMsg);
+
+    Serial.println("✅ Sent ACK for toggle_pump");
+
+  } else if (type == "ack" && command == "toggle_pump") {
+    Serial.println("✅ Received ACK from the server");
 
     // buzz
     digitalWrite(buzzerPin, HIGH);
@@ -338,6 +359,10 @@ void setup() {
 
   // connect using stored credentials if available
   trySavedCredentials();
+
+  prefs.begin("state", true);
+  bool isOn = prefs.getBool("isOn", false); // false as default
+  prefs.end();
 
   // handle requests
   server.on("/", handleRoot);
