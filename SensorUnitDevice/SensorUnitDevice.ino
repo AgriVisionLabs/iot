@@ -4,13 +4,19 @@
 #include <ArduinoWebsockets.h>
 #include <LittleFS.h>
 #include <ArduinoJson.h>
+#include "DHT.h"
 #define RESET_BUTTON_PIN 0
 #define LED_PIN 2
+#define DHTPIN 15  
+#define DHTTYPE DHT11
+
 
 using namespace websockets;
 
 // declar and assign buzzer pin
 const int buzzerPin = 14;
+
+DHT dht(DHTPIN, DHTTYPE);
 
 // declare and assign the websocket url
 const char* websocketUrl = "wss://agrivision.tryasp.net/SensorDeviceWs";
@@ -19,13 +25,14 @@ const char* websocketUrl = "wss://agrivision.tryasp.net/SensorDeviceWs";
 WebsocketsClient client;
 
 // declare and assign the provisioning key
-const String provisioningKey = "SENSOR-X7Q4-MOIST-KEY9-Z1B3L";
+const String provisioningKey = "SENSOR-X7Q4-MOIST-KEY9-Z3C4U";
 
 // webserver setup
 Preferences prefs;
 WebServer server(80); // listen on port 80 for http requests 
 const char* apSSID = "SENSOR-ESP32-01";
 const char* apPassword = "password";
+
 
 String pendingSSID = "";
 String pendingPassword = "";
@@ -122,7 +129,6 @@ void onWebSocketMessage(WebsocketsMessage message) {
     pongMsg += "}";
 
     client.send(pongMsg);
-
   }
 }
 
@@ -315,6 +321,31 @@ void handleNotFound() {
   }
 }
 
+unsigned long lastReadingTime = 0;
+const unsigned long readingInterval = 1000 * 60 * 3;
+
+void SendReadings() {
+  int analogValue = analogRead(35);
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature();
+  String mac = WiFi.macAddress();
+  
+  String jsonMsg = "{";
+  jsonMsg += "\"type\":\"readings\",";
+  jsonMsg += "\"macAddress\":\"" + mac + "\",";
+  jsonMsg += "\"provisioningKey\":\"" + provisioningKey + "\",";
+  jsonMsg += "\"readings\":{";
+  jsonMsg += "\"moisture\":\"" + String(analogValue) + "\",";
+  jsonMsg += "\"temperature\":\"" + String(temperature, 1) + "\",";
+  jsonMsg += "\"humidity\":\"" + String(humidity, 1) + "\"";
+  jsonMsg += "}";
+  jsonMsg += "}";
+
+  client.send(jsonMsg);
+
+  Serial.printf("Sent readings:\nMoisture: %d\nTemp: %.2f°C\nHumidity: %.2f%%\n", analogValue, temperature, humidity);
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -350,6 +381,8 @@ void setup() {
 
   // start the server
   server.begin();
+
+  dht.begin();
 }
 
 void loop() {
@@ -357,13 +390,13 @@ void loop() {
   
   server.handleClient();
 
-  int analogValue = analogRead(35);
-
-  Serial.printf("Analog value = %d\n",analogValue);
-
-  delay(300);
 
   if (client.available()) {
     client.poll(); // keep socket alive
+  }
+
+  if (millis() - lastReadingTime >= readingInterval) {
+    SendReadings();
+    lastReadingTime = millis(); // reset the timer
   }
 }
