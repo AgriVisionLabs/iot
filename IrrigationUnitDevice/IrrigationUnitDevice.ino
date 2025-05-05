@@ -6,6 +6,8 @@
 #include <ArduinoJson.h>
 #define RESET_BUTTON_PIN 0
 #define LED_PIN 2
+#define motor1A 27
+#define motor2A 26
 
 using namespace websockets;
 
@@ -134,21 +136,33 @@ void onWebSocketMessage(WebsocketsMessage message) {
     Serial.println("✅ Sent ACK for toggle_pump");
 
   } else if (type == "ack" && command == "toggle_pump") {
-    Serial.println("✅ Received ACK from the server");
+      Serial.println("✅ Received ACK from the server");
 
-    // buzz
-    digitalWrite(buzzerPin, HIGH);
-    delay(500);
-    digitalWrite(buzzerPin, LOW);
-  }
-   else if (type == "ping") {
-    Serial.println("🏓 Ping received — sending Pong...");
+      // Get saved state
+      prefs.begin("state", true);  // read-only mode
+      bool isOn = prefs.getBool("isOn", false); // default off
+      prefs.end();
 
-    String pongMsg = "{";
-    pongMsg += "\"type\":\"pong\"";
-    pongMsg += "}";
+      Serial.printf("🔄 Current isOn = %s\n", isOn ? "true" : "false");
 
-    client.send(pongMsg);
+      // Toggle motor based on state
+      if (isOn) {
+        Serial.println("🔴 Turning pump ON");
+        digitalWrite(motor1A, HIGH);     
+        digitalWrite(motor2A, LOW); 
+      } else {
+        Serial.println("⚪ Turning pump OFF");
+        digitalWrite(motor1A, LOW);     
+        digitalWrite(motor2A, LOW); 
+      }
+    } else if (type == "ping") {
+        Serial.println("🏓 Ping received — sending Pong...");
+
+        String pongMsg = "{";
+        pongMsg += "\"type\":\"pong\"";
+        pongMsg += "}";
+
+        client.send(pongMsg);
   }
 }
 
@@ -356,6 +370,10 @@ void setup() {
 
   // setup pin mode for buzzer to output
   pinMode(buzzerPin, OUTPUT);
+
+  // motor pins
+  pinMode(motor1A, OUTPUT);
+  pinMode(motor2A, OUTPUT); 
 
   // connect using stored credentials if available
   trySavedCredentials();

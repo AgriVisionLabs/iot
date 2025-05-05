@@ -322,7 +322,7 @@ void handleNotFound() {
 }
 
 unsigned long lastReadingTime = 0;
-const unsigned long readingInterval = 1000 * 60 * 3;
+const unsigned long readingInterval = 1000 * 10;
 
 void SendReadings() {
   int analogValue = analogRead(35);
