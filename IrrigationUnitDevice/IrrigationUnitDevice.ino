@@ -382,6 +382,16 @@ void setup() {
   bool isOn = prefs.getBool("isOn", false); // false as default
   prefs.end();
 
+  if (isOn) {
+    Serial.println("🔁 Boot: Turning pump ON (restored state)");
+    digitalWrite(motor1A, HIGH);     
+    digitalWrite(motor2A, LOW); 
+  } else {
+    Serial.println("🔁 Boot: Pump remains OFF (restored state)");
+    digitalWrite(motor1A, LOW);     
+    digitalWrite(motor2A, LOW); 
+  }
+
   // handle requests
   server.on("/", handleRoot);
   server.on("/connect", HTTP_POST, handleConnect);
