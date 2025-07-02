@@ -6,8 +6,7 @@
 #include <ArduinoJson.h>
 #define RESET_BUTTON_PIN 0
 #define LED_PIN 2
-#define motor1A 27
-#define motor2A 26
+#define RELAY_PIN 27
 
 using namespace websockets;
 
@@ -147,13 +146,11 @@ void onWebSocketMessage(WebsocketsMessage message) {
 
       // Toggle motor based on state
       if (isOn) {
-        Serial.println("🔴 Turning pump ON");
-        digitalWrite(motor1A, HIGH);     
-        digitalWrite(motor2A, LOW); 
+        Serial.println("🔴 Turning ON");
+        digitalWrite(RELAY_PIN, HIGH); 
       } else {
-        Serial.println("⚪ Turning pump OFF");
-        digitalWrite(motor1A, LOW);     
-        digitalWrite(motor2A, LOW); 
+        Serial.println("⚪ Turning OFF");
+        digitalWrite(RELAY_PIN, LOW);
       }
     } else if (type == "ping") {
         Serial.println("🏓 Ping received — sending Pong...");
@@ -371,9 +368,9 @@ void setup() {
   // setup pin mode for buzzer to output
   pinMode(buzzerPin, OUTPUT);
 
-  // motor pins
-  pinMode(motor1A, OUTPUT);
-  pinMode(motor2A, OUTPUT); 
+  // relay pin
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW); // start with relay off
 
   // connect using stored credentials if available
   trySavedCredentials();
@@ -383,13 +380,11 @@ void setup() {
   prefs.end();
 
   if (isOn) {
-    Serial.println("🔁 Boot: Turning pump ON (restored state)");
-    digitalWrite(motor1A, HIGH);     
-    digitalWrite(motor2A, LOW); 
+    Serial.println("🔁 Boot: Turning ON (restored state)");
+    digitalWrite(RELAY_PIN, HIGH);
   } else {
-    Serial.println("🔁 Boot: Pump remains OFF (restored state)");
-    digitalWrite(motor1A, LOW);     
-    digitalWrite(motor2A, LOW); 
+    Serial.println("🔁 Boot: Pump OFF (restored state)");
+    digitalWrite(RELAY_PIN, LOW); 
   }
 
   // handle requests
