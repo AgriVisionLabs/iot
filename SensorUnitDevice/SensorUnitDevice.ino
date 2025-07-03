@@ -19,7 +19,7 @@ const int buzzerPin = 14;
 DHT dht(DHTPIN, DHTTYPE);
 
 // declare and assign the websocket url
-const char* websocketUrl = "wss://agrivision.tryasp.net/SensorDeviceWs";
+const char* websocketUrl = "wss://api.agrivisionlabs.tech/SensorDeviceWs";
 
 // declare a websocket client
 WebsocketsClient client;

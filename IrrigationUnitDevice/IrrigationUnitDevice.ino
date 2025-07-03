@@ -14,7 +14,7 @@ using namespace websockets;
 const int buzzerPin = 14;
 
 // declare and assign the websocket url
-const char* websocketUrl = "wss://agrivision.tryasp.net/IrrigationDeviceWS";
+const char* websocketUrl = "wss://api.agrivisionlabs.tech/IrrigationDeviceWS";
 
 // declare a websocket client
 WebsocketsClient client;
